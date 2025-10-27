@@ -62,12 +62,12 @@
                 linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
             background-size: 60px 60px;
             z-index: -1;
-            animation: pan-grid 60s linear infinite;
+            animation: pan-grid 120s linear infinite;
         }
 
         @keyframes pan-grid {
             from { background-position: 0 0; }
-            to { background-position: 60px 60px; }
+            to { background-position: 240px 120px; }
         }
 
         .loading {
@@ -114,7 +114,7 @@
             background: rgba(16, 16, 16, 0.5);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
-            transition: top 0.3s;
+            transition: top 0.4s ease-in-out;
         }
         
         .logo {
@@ -189,6 +189,11 @@
             }
         }
         
+        @keyframes pulse-shadow {
+            0%, 100% { text-shadow: 0 0 25px rgba(230, 0, 35, 0.3); }
+            50% { text-shadow: 0 0 45px rgba(230, 0, 35, 0.6); }
+        }
+
         #welcome h1 {
             font-size: 5rem;
             margin-bottom: 1rem;
@@ -197,7 +202,7 @@
             background-clip: text;
             color: transparent;
             text-shadow: 0 0 25px rgba(230, 0, 35, 0.3);
-            animation: fadeInUp 0.8s ease-out forwards;
+            animation: fadeInUp 0.8s ease-out forwards, pulse-shadow 3s ease-in-out infinite 1s;
         }
 
         #welcome .subtitle {
@@ -286,7 +291,18 @@
             position: relative;
             overflow-x: auto;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc; 
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
+        
+        .sc-func { color: var(--primary); font-weight: bold; }
+        .sc-obj { color: #569cd6; }
+        .sc-method { color: #dcdcaa; }
+        .sc-str { color: #ce9178; }
+        .sc-bool { color: #4ec9b0; }
+
 
         .copy-btn {
             cursor: pointer;
@@ -369,14 +385,12 @@
         .game-card-scroller {
             width: 220px;
             flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-style: preserve-3d;
         }
 
         .game-card-scroller:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) perspective(1000px) rotateX(5deg) rotateY(-5deg);
         }
 
         .game-image-wrapper {
@@ -387,12 +401,40 @@
             background-position: center;
             border: 1px solid var(--border-color);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
-        .game-card-scroller h3 {
+        .game-card-scroller:hover .game-image-wrapper {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 25px rgba(230, 0, 35, 0.5);
+            border-color: var(--primary);
+        }
+
+        .game-image-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            z-index: 1;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .game-image-wrapper h3 {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--light);
+            z-index: 2;
+            margin: 0;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.7);
+            text-align: left;
         }
 
         .faq-container {
@@ -410,6 +452,11 @@
         
         .faq-item:hover {
             border-color: var(--primary);
+        }
+        
+        .faq-item.active {
+            border-color: var(--primary);
+            background: #1f1f1f;
         }
 
         .faq-question {
@@ -493,6 +540,40 @@
             transform: translateY(0);
         }
 
+        /* Новое: кнопка "Наверх" */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 1.2rem;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(230, 0, 35, 0.3);
+        }
+        .back-to-top:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(230, 0, 35, 0.5);
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+
         @media (max-width: 768px) {
             header { flex-direction: column; padding: 0.5rem 1rem; }
             nav { padding: 0.5rem 0; }
@@ -551,7 +632,7 @@
                 </a>
             </div>
             <a href="#script" class="scroll-down">
-                   <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down"></i>
             </a>
         </section>
 
@@ -559,13 +640,13 @@
             <h2 class="section-title reveal">Get The Script</h2>
             <div class="script-container reveal">
                 <p style="margin-bottom: 0.5rem;">Click the button below to copy the script:</p>
-                <div class="script-code" id="script-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/Yomkaa/YOXI-HUB/refs/heads/main/loader",true))()</div>
+                <div class="script-code" id="script-code"><span class="sc-func">loadstring</span>(<span class="sc-obj">game</span>:<span class="sc-method">HttpGet</span>(<span class="sc-str">"https://raw.githubusercontent.com/Yomkaa/YOXI-HUB/refs/heads/main/loader"</span>,<span class="sc-bool">true</span>))()</div>
                 <button class="btn copy-btn" id="copy-btn" onclick="copyScript()">
                     <i class="fas fa-copy"></i> Copy Script
                 </button>
             </div>
                <a href="#games" class="scroll-down">
-                   <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down"></i>
             </a>
         </section>
 
@@ -578,20 +659,76 @@
                 
                 <div class="games-scroller" id="games-scroller">
                     <div class="scroller__inner">
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-26.png');"></div><h3>Forsaken</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/fisch.png');"></div><h3>Fish it!</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-22.png');"></div><h3>Bee Swarm Simulator</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-25.png');"></div><h3>Evade</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-24.png');"></div><h3>Grow a Garden</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-17.png');"></div><h3>Pressure</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-19.png');"></div><h3>Grace</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-21.png');"></div><h3>Bubble Gum Simulator</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-23.png');"></div><h3>Dandy's World</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/arsenal.png');"></div><h3>Arsenal</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-20.png');"></div><h3>Bow battle arena</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/hyper.png');"></div><h3>Hypershot</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/sewh.png');"></div><h3>S.e.w.h</h3></div>
-                        <div class="game-card-scroller"><div class="game-image-wrapper" style="background-image: url('photos/dod.png');"></div><h3>Die of death</h3></div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-26.png');">
+                                <h3>Forsaken</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/fisch.png');">
+                                <h3>Fish it!</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-22.png');">
+                                <h3>Bee Swarm Simulator</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-25.png');">
+                                <h3>Evade</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-24.png');">
+                                <h3>Grow a Garden</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-17.png');">
+                                <h3>Pressure</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-19.png');">
+                                <h3>Grace</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-21.png');">
+                                <h3>Bubble Gum Simulator</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-23.png');">
+                                <h3>Dandy's World</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/arsenal.png');">
+                                <h3>Arsenal</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/rounded-in-photoretrica-20.png');">
+                                <h3>Bow battle arena</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/hyper.png');">
+                                <h3>Hypershot</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/sewh.png');">
+                                <h3>S.e.w.h</h3>
+                            </div>
+                        </div>
+                        <div class="game-card-scroller">
+                            <div class="game-image-wrapper" style="background-image: url('photos/dod.png');">
+                                <h3>Die of death</h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -600,7 +737,7 @@
                 </button>
             </div>
                <a href="#faq" class="scroll-down">
-                   <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down"></i>
             </a>
         </section>
 
@@ -664,6 +801,10 @@
         <p class="copyright">&copy; 2025 YOXI HUB. All Rights Reserved.</p>
     </footer>
 
+    <a href="#welcome" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
@@ -721,6 +862,28 @@
                     behavior: 'smooth'
                 });
             });
+
+            let lastScrollTop = 0;
+            const header = document.querySelector('header');
+            const backToTopBtn = document.querySelector('.back-to-top');
+
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > header.offsetHeight) {
+                    header.style.top = '-100px'; 
+                } else {
+                    header.style.top = '0';
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
+
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+
         });
         
         function toggleFaq(element) {
